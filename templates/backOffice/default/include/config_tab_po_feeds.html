@@ -1,0 +1,153 @@
+<div class="panel panel-default">
+    <div class="panel-heading clearfix">
+        <div class="panel-title">
+            {intl l="Configuration"}
+        </div>
+    </div>
+    <div class="panel-body">
+
+        <div class="alert alert-info">
+            <p>Click on any XML button to generate an XML file for Price Observatory. For now, the module uses the same flux created for Google Shopping XML, but the name and money don't matter, only
+                country may change delivery price while language may change titles and descriptions.
+            </p>
+        </div>
+
+        <div class="alert alert-help">
+            {form name="priceobservatorycr.feed.management"}
+            <div class="row">
+                <form method="post" action='{url path="/admin/module/priceobservatorycr/feed/add"}'>
+                    {form_hidden_fields form=$form}
+                    {form_field form=$form field="feed_label"}
+                    <div class="form-group col-md-2 {if $error}has-error{/if}">
+                        <label for="{$label_attr.for}">{$label}</label>
+                        <input id="{$label_attr.for}" class="form-control" name="{$name}" required/>
+                    </div>
+                    {/form_field}
+
+                    {form_field form=$form field="lang_id"}
+                    <div class="form-group col-md-2 {if $error}has-error{/if}">
+                        <label for="{$label_attr.for}">{$label}</label>
+                        <select id="{$label_attr.for}" class="form-control" name="{$name}">
+                            {loop type="lang" name="loop_lang_add_feed"}
+                            <option value="{$ID}">{$TITLE}</option>
+                            {/loop}
+                        </select>
+                    </div>
+                    {/form_field}
+
+                    {form_field form=$form field="currency_id"}
+                    <div class="form-group col-md-2 {if $error}has-error{/if}">
+                        <label for="{$label_attr.for}">{$label}</label>
+                        <select id="{$label_attr.for}" class="form-control" name="{$name}">
+                            {loop type="currency" name="loop_currency_add_feed"}
+                            <option value="{$ID}">{$SYMBOL}</option>
+                            {/loop}
+                        </select>
+                    </div>
+                    {/form_field}
+
+                    {form_field form=$form field="country_id"}
+                    <div class="form-group col-md-3 {if $error}has-error{/if}">
+                        <label for="{$label_attr.for}">{$label}</label>
+                        <select id="{$label_attr.for}" class="form-control" name="{$name}">
+                            {loop type="country" name="loop_country_add_feed"}
+                            <option value="{$ID}" {if $ID==64}selected{/if}>{$TITLE}</option>
+                            {/loop}
+                        </select>
+                    </div>
+                    {/form_field}
+
+                    <div class="form-group col-md-3">
+                        <label class="control-label">&nbsp;</label>
+                        <button class="btn btn-default btn-primary form-control" type="submit">
+                            <span class="glyphicon glyphicon-plus"></span>
+                            {intl l="Add"}
+                        </button>
+                    </div>
+                </form>
+            </div>
+            {/form}
+        </div>
+
+
+
+        {loop type="priceobservatorycr.feed" name="priceobservatorycr_feed"}
+
+        <div class="row">
+            {form name="priceobservatorycr.feed.management"}
+            <form method="post" action='{url path="/admin/module/priceobservatorycr/feed/update"}'>
+                {form_hidden_fields form=$form}
+
+                {form_field form=$form field="id"}
+                {$ID_FEED = $ID}
+                <input type="hidden" name="{$name}" value="{$ID}"/>
+                {/form_field}
+
+                {form_field form=$form field="feed_label"}
+                <div class="form-group col-md-2 {if $error}has-error{/if}">
+                    <input class="form-control" name="{$name}" value="{$LABEL}" required/>
+                </div>
+                {/form_field}
+
+                {form_field form=$form field="lang_id"}
+                <div class="form-group col-md-2 {if $error}has-error{/if}">
+                    <select class="form-control" name="{$name}">
+                        {loop type="lang" name="loop_lang_update_feed"}
+                        <option value="{$ID}" {if $ID==$LANG_ID}selected{/if}>{$TITLE}</option>
+                        {/loop}
+                    </select>
+                </div>
+                {/form_field}
+
+                {form_field form=$form field="currency_id"}
+                <div class="form-group col-md-2 {if $error}has-error{/if}">
+                    <select class="form-control" name="{$name}">
+                        {loop type="currency" name="loop_currency_update_feed"}
+                        <option value="{$ID}" {if $ID==$CURRENCY_ID}selected{/if}>{$SYMBOL}</option>
+                        {/loop}
+                    </select>
+                </div>
+                {/form_field}
+
+                {form_field form=$form field="country_id"}
+                <div class="form-group col-md-3 {if $error}has-error{/if}">
+                    <select id="{$label_attr.for}" class="form-control" name="{$name}">
+                        {loop type="country" name="loop_country_update_feed"}
+                        <option value="{$ID}" {if $ID==$COUNTRY_ID}selected{/if}>{$TITLE}</option>
+                        {/loop}
+                    </select>
+                </div>
+                {/form_field}
+
+                <div class="form-group col-md-1">
+                    <div class='btn-group'>
+                        <button class="btn btn-success" type="submit">
+                            <span class="glyphicon glyphicon-ok"></span>
+                            {intl l="Save"}
+                        </button>
+                    </div>
+                </div>
+            </form>
+            {/form}
+
+            <div class="form-group col-md-2">
+                <div class="btn-group">
+                    <a class="js_download_xml_feed btn btn-info" href="{url path="/priceobservatorycr/feed/xml/{$ID}/feed.xml"}" data-feedid="{$ID_FEED}" download>
+                        {intl l="XML"}
+                    </a>
+                    <a href="#" class="js_btn_clipboard btn-control-feed btn btn-default" data-toggle="tooltip" title="{intl l='Copy XML link into clipboard'}" data-clipboardtext="{url path="/priceobservatorycr/feed/xml/{$ID}/feed.xml"}">
+                        <span class="glyphicon glyphicon-link"></span>
+                    </a>
+                </div>
+
+                <form id="js_form_delete_feed_{$ID_FEED}" class="custom-form-inline" method="post" action="{url path='/admin/module/priceobservatorycr/feed/delete'}">
+                    <input type="hidden" name="id_feed_to_delete" value="{$ID_FEED}"/>
+                    <a class="btn btn-danger js_btn_delete_with_warning" data-formid="js_form_delete_feed_{$ID_FEED}">
+                        <span class="glyphicon glyphicon-trash"></span>
+                    </a>
+                </form>
+            </div>
+        </div>
+        {/loop}
+    </div>
+</div>

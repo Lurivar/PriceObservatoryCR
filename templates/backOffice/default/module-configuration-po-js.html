@@ -1,0 +1,299 @@
+{default_translation_domain domain='priceobservatorycr.bo.default'}
+
+<script>
+
+    $(document).ready(function(){
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+
+    $(function () {
+
+        var $loader = $('<div class="loader"></div>');
+        $('body').append($loader);
+
+
+        // ***********************************************
+        //            FEED MANAGEMENT TAB
+        // ***********************************************
+
+        // Copy link to clipboard
+
+        $('.js_btn_clipboard').on('click', function(e){
+            e.preventDefault();
+            if(setClipboardText(this.dataset.clipboardtext)){
+                var btn = this;
+                setTimeout(function(){
+                    btn.dataset.originalTitle = "{intl l='Copied!'}";
+                    $(btn).tooltip('show');
+                }, 100)
+            }
+        });
+
+        function setClipboardText(text){
+            var id = "mycustom-clipboard-textarea-hidden-id";
+            var existsTextarea = document.getElementById(id);
+
+            if(!existsTextarea){
+                var textarea = document.createElement("textarea");
+                textarea.id = id;
+                textarea.style.position = 'fixed';
+                textarea.style.top = 0;
+                textarea.style.left = 0;
+                textarea.style.width = '1px';
+                textarea.style.height = '1px';
+                textarea.style.padding = 0;
+                textarea.style.border = 'none';
+                textarea.style.outline = 'none';
+                textarea.style.boxShadow = 'none';
+                textarea.style.background = 'transparent';
+                document.querySelector("body").appendChild(textarea);
+                existsTextarea = document.getElementById(id);
+            }
+
+            existsTextarea.value = text;
+            existsTextarea.select();
+
+            try {
+                var status = document.execCommand('copy');
+                if(status){
+                    return true;
+                }
+            } catch (err) { }
+
+            return false;
+        }
+
+
+
+        // Delete feed - Confirm dialog
+
+        $('#js_btn_modal_confirm_delete_confirm').on('click',function(e){
+            e.preventDefault();
+            var formid = this.dataset.formid;
+            this.dataset.formid = '';
+            if (formid != "" && formid != null) {
+                $('#'+formid).submit();
+            }
+            $('#js_modal_confirm_delete').modal("hide");
+        });
+
+        $('.js_btn_delete_with_warning').on('click', function(e) {
+            e.preventDefault();
+            var $warningLine1 = "{intl l='Do you really want to delete this feed ?'}";
+            var $warningLine2 = "{intl l='Please note that it won\'t delete the feed in your Google Merchant account. You will have to do it manually in the Google Merchant Center page.'}";
+            document.getElementById('js_btn_modal_confirm_delete_confirm').dataset.formid = this.dataset.formid;
+            $('#js_body_modal_confirm_delete').html('<strong>' + $warningLine1 + '</strong><p>' + $warningLine2 + '</p>');
+            $('#js_modal_confirm_delete').modal("show");
+        });
+
+
+
+        // Configure custom XML modal
+
+        $('.js_btn_configure_custom_xml').on('click',function(e){
+            e.preventDefault();
+            var $modalCustomXml = $('#js_modal_custom_xml');
+            $modalCustomXml.modal();
+            document.getElementById('js_btn_generate_custom_xml').dataset.feedid = this.dataset.feedid;
+        });
+
+
+        $('#js_btn_generate_custom_xml').on('click',function(e){
+            e.preventDefault();
+            var feedid = this.dataset.feedid;
+            var numberOfDivisions = $('#js_input_xml_divide_time').val();
+            var nb_pse = {$pse_count};
+            var base_url = $('.js_download_xml_feed[data-feedid='+feedid+']').attr('href');
+            console.log(base_url);
+
+            var limit = Math.ceil(nb_pse / numberOfDivisions);
+
+            var html = '<ul>';
+            for (var i=0; i < numberOfDivisions; i++){
+                var offset = i * limit;
+                if (offset+1 > nb_pse){
+                    break;
+                }
+                var url = base_url+'?offset='+offset+'&limit='+limit;
+
+                var end = offset+limit;
+                if (end > nb_pse){
+                    end = nb_pse;
+                }
+                html += '<li><a href="'+url+'" download>Xml file part '+(i+1)+' : items '+(offset+1)+' to ' + end +'</a></li>';
+            }
+            html += '</ul>';
+            document.getElementById('js_xml_divided_link_container').innerHTML = html;
+
+            console.log(nb_pse);
+            console.log(limit);
+        });
+
+
+        // ***********************************************
+        //                ERROR LOG TAB
+        // ***********************************************
+
+        var errorLogResult = null;
+        var logCurrentPage = 1;
+
+
+        var errorLevelInfo = {
+            1 : {
+                className : '',
+                label : '{intl l="INFO"}',
+                name: 'info'
+            },
+            2 : {
+                className : 'tr_log_success',
+                label : '{intl l="SUCCESS"}',
+                name : 'success'
+            },
+            3 : {
+                className : 'tr_log_warning',
+                label : '{intl l="WARNING"}',
+                name : 'warning'
+            },
+            4 : {
+                className : 'tr_log_error',
+                label : '{intl l="ERROR"}',
+                name : 'error'
+            },
+            5 : {
+                className : 'tr_log_fatal',
+                label : '{intl l="FATAL"}',
+                name : 'fatal'
+            }
+        };
+
+
+        function getXmlLogAjax() {
+            $loader.show();
+            var limit = $("select#js_select_log_limit option:checked").val();
+
+            var offset = 0;
+            if (errorLogResult != null) {
+                offset = (logCurrentPage - 1) * limit;
+            }
+
+            var dataToSend = {
+                limit : limit,
+                offset : offset
+            };
+
+            $('.js_checkbox_level_log:checked').each(function (checkbox) {
+                dataToSend[errorLevelInfo[this.dataset.level].name] = 1;
+            });
+
+            $.ajax({
+                url      : '{url path="/admin/module/priceobservatorycr/log/get"}',
+                data     : dataToSend,
+                type     : 'get',
+                dataType : 'json',
+                success  : function(data){
+                    errorLogResult = data;
+                    updateLogTable();
+                    $loader.hide();
+                },
+                error : function(jqXHR, textStatus, errorThrown) {
+                    $("#js_tab_xml_log").html("<tr><td colspan=\"5\">{intl l='An error has occurred during the server request.'}</td></tr>");
+                    $loader.hide();
+                }
+            });
+        }
+
+
+        $('.js_btn_gsxml_log_refresh').on('click',function(e){
+            e.preventDefault();
+            logCurrentPage = 1;
+            getXmlLogAjax();
+        });
+
+        $('.js_tab_gsxml_log').on('click',function(e){
+            logCurrentPage = 1;
+            getXmlLogAjax();
+        });
+
+        $('#js_select_log_limit').on('change', function(e){
+            logCurrentPage = 1;
+            getXmlLogAjax();
+        });
+
+        $('.js_checkbox_level_log').on('change', function(e){
+            logCurrentPage = 1;
+            getXmlLogAjax();
+        });
+
+        $('.js_log_first_page').on('click',function (e) {
+            logCurrentPage = 1;
+            getXmlLogAjax();
+        });
+
+        $('.js_log_previous_page').on('click',function (e) {
+            if (logCurrentPage > 1) {
+                logCurrentPage--;
+                getXmlLogAjax();
+            }
+        });
+
+        $('.js_log_next_page').on('click',function (e) {
+            if (errorLogResult != null && errorLogResult.length > 0) {
+                logCurrentPage++;
+                getXmlLogAjax();
+            }
+        });
+
+
+        function updateLogTable(){
+            if (errorLogResult != null && errorLogResult.length) {
+                $('.js_log_next_page').removeClass("disabled");
+            }else{
+                $('.js_log_next_page').addClass("disabled");
+            }
+
+            if (logCurrentPage > 1){
+                $('.js_log_first_page').removeClass("disabled");
+                $('.js_log_previous_page').removeClass("disabled");
+            }else{
+                $('.js_log_first_page').addClass("disabled");
+                $('.js_log_previous_page').addClass("disabled");
+            }
+
+            if (errorLogResult == null) {
+                return;
+            }
+
+            var innerHtml = "<tr><th>{intl l='Date'}</th><th>{intl l='Feed'}</th><th>{intl l='Level'}</th><th>{intl l='Message'}</th><th>{intl l='Product item'}</th></tr>";
+
+            if (errorLogResult.length > 0) {
+                errorLogResult.forEach(function(log){
+                    var levelArray = errorLevelInfo[log.level];
+                    var helpTooltip = '';
+                    if (log.help) {
+                        helpTooltip += ' <a href="#" data-toggle="tooltip" title="' + log.help + '"><span class="glyphicon glyphicon-question-sign"></span></a>';
+                    }
+
+                    innerHtml += '<tr class="' + levelArray.className + '">';
+                    innerHtml += '<td>' + log.date + '</td>';
+                    innerHtml += '<td>' + log.feed_label + '</td>';
+                    innerHtml += '<td>' + levelArray.label + '</td>';
+                    innerHtml += '<td>' + log.message + helpTooltip + '</td>';
+                    if (log.product_id) {
+                        innerHtml += '<td><a href="' + '{url path = '/admin/products/update'}' + '?product_id=' + log.product_id + '">' + log.product_ref + '</a></td>';
+                    }else{
+                        innerHtml += '<td>-</td>';
+                    }
+                    innerHtml += '</tr>';
+                });
+            } else {
+                innerHtml += "<tr><td colspan=\"5\">{intl l='Nothing to show.'}</td></tr>";
+            }
+
+            var $table = $('#js_table_xml_log');
+            $table.html(innerHtml);
+            $('[data-toggle="tooltip"]').tooltip()
+        }
+
+
+    });
+</script>

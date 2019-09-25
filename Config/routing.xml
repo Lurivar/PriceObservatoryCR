@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<routes xmlns="http://symfony.com/schema/routing"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://symfony.com/schema/routing http://symfony.com/schema/routing/routing-1.0.xsd">
+
+    <route id="priceobservatorycr.config" path="/admin/module/PriceObservatoryCR">
+        <default key="_controller">PriceObservatoryCR\Controller\ModuleConfigController::viewConfigAction</default>
+    </route>
+
+    <!-- FEED XML -->
+
+    <route id="priceobservatorycr.getfeedxml" path="/priceobservatorycr/feed/xml/{feedId}/feed.xml">
+        <default key="_controller">PriceObservatoryCR\Controller\FeedXmlController::getFeedXmlAction</default>
+        <requirement key="feedId">\d+</requirement>
+    </route>
+
+    <!-- FEED CONFIGURATION -->
+
+    <route id="priceobservatorycr.feed.add" path="/admin/module/priceobservatorycr/feed/add" methods="POST">
+        <default key="_controller">PriceObservatoryCR\Controller\FeedConfigController::addFeedAction</default>
+    </route>
+
+    <route id="priceobservatorycr.feed.update" path="/admin/module/priceobservatorycr/feed/update" methods="POST">
+        <default key="_controller">PriceObservatoryCR\Controller\FeedConfigController::updateFeedAction</default>
+    </route>
+
+    <route id="priceobservatorycr.feed.delete" path="/admin/module/priceobservatorycr/feed/delete" methods="POST">
+        <default key="_controller">PriceObservatoryCR\Controller\FeedConfigController::deleteFeedAction</default>
+    </route>
+
+    <!-- XML ERROR LOG -->
+
+    <route id="priceobservatorycr.log.get" path="/admin/module/priceobservatorycr/log/get" methods="GET">
+        <default key="_controller">PriceObservatoryCR\Controller\LogController::getLogAction</default>
+    </route>
+
+</routes>

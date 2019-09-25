@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<config xmlns="http://thelia.net/schema/dic/config"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://thelia.net/schema/dic/config http://thelia.net/schema/dic/config/thelia-1.0.xsd">
+
+    <loops>
+        <loop name="priceobservatorycr.feed" class="PriceObservatoryCR\Loop\FeedLoop" />
+    </loops>
+
+    <forms>
+        <form name="priceobservatorycr.feed.management" class="PriceObservatoryCR\Form\FeedManagementForm" />
+    </forms>
+
+    <hooks>
+        <hook id="priceobservatorycr.module.config.hook" class="PriceObservatoryCR\Hook\HookManager" scope="request">
+            <tag name="hook.event_listener" event="module.configuration" type="back" templates="render:module-configuration-po.html" />
+            <tag name="hook.event_listener" event="module.config-js" type="back" templates="render:module-configuration-po-js.html" />
+            <tag name="hook.event_listener" event="main.head-css" type="back" />
+        </hook>
+    </hooks>
+
+</config>
