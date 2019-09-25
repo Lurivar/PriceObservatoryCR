@@ -14,7 +14,6 @@ use Propel\Runtime\Propel;
 use Thelia\Action\Image;
 use Thelia\Controller\Front\BaseFrontController;
 use Thelia\Core\Event\Image\ImageEvent;
-use Thelia\Core\Event\TheliaEvents;
 use Thelia\Core\HttpFoundation\Response;
 use Thelia\Core\Translation\Translator;
 use Thelia\Model\AreaDeliveryModuleQuery;
@@ -86,7 +85,7 @@ class FeedXmlController extends BaseFrontController
                     $feed,
                     null,
                     Translator::getInstance()->trans('%nb product item(s) have been skipped because they were set as not visible or didn\'t have their top parameter set as 1.', ['%nb' => $this->nb_pse_invisible], PriceObservatoryCR::DOMAIN_NAME),
-                    Translator::getInstance()->trans('You can set your product s visibility in the product edit tool by checking the box [This product is online].', [], PriceObservatoryCR::DOMAIN_NAME)
+                    Translator::getInstance()->trans('You can set your products visibility in the product edit tool by checking the box [This product is online].', [], PriceObservatoryCR::DOMAIN_NAME)
                 );
             }
 
@@ -103,8 +102,8 @@ class FeedXmlController extends BaseFrontController
                 $this->logger->logFatal(
                     $feed,
                     null,
-                    Translator::getInstance()->trans('No product in the feed', [], PriceObservatoryCR::DOMAIN_NAME),
-                    Translator::getInstance()->trans('Your products may not have been included in the feed due to errors. Check the others messages in this log.', [], PriceObservatoryCR::DOMAIN_NAME)
+                    Translator::getInstance()->trans('No valid products with a \'Top\' value of 1 have been found', [], PriceObservatoryCR::DOMAIN_NAME),
+                    Translator::getInstance()->trans('Your products may not have been included due to errors. Check the others messages in this log.', [], PriceObservatoryCR::DOMAIN_NAME)
                 );
             } else {
                 $nb_line_xml = substr_count($content, PHP_EOL);
@@ -113,7 +112,7 @@ class FeedXmlController extends BaseFrontController
                         $feed,
                         null,
                         Translator::getInstance()->trans('Empty generated XML file', [], PriceObservatoryCR::DOMAIN_NAME),
-                        Translator::getInstance()->trans('Your products may not have been included in the feed due to errors. Check the others messages in this log.', [], PriceObservatoryCR::DOMAIN_NAME)
+                        Translator::getInstance()->trans('Your products may not have been included due to errors. Check the others messages in this log.', [], PriceObservatoryCR::DOMAIN_NAME)
                     );
                 } else {
                     $this->logger->logSuccess($feed, null, Translator::getInstance()->trans('The XML file has been successfully generated with %nb product items.', ['%nb' => $this->nb_pse], PriceObservatoryCR::DOMAIN_NAME));
@@ -299,7 +298,7 @@ class FeedXmlController extends BaseFrontController
                 $feed,
                 $pse['ID'],
                 Translator::getInstance()->trans('Missing product brand for the language "%lang"', ['%lang' => $feed->getLang()->getTitle()], PriceObservatoryCR::DOMAIN_NAME),
-                Translator::getInstance()->trans('The product has no brand or the brand doesn t have a title in this language. If none of your product has a brand, please add a [brand] field with a fixed value in the [Advanded Configuration] tab as this field is required by Google.', [], PriceObservatoryCR::DOMAIN_NAME)
+                Translator::getInstance()->trans('The product has no brand or the brand doesn t have a title in this language.', [], PriceObservatoryCR::DOMAIN_NAME)
             );
             $str .= '<marque>' . ' ' . '</marque>' . PHP_EOL;
         } else {
@@ -673,7 +672,7 @@ class FeedXmlController extends BaseFrontController
                 $feed,
                 null,
                 Translator::getInstance()->trans('No shipping informations.', [], PriceObservatoryCR::DOMAIN_NAME),
-                Translator::getInstance()->trans('The feed doesn t have any shippings informations. Check that at least one delivery module covers the country aimed by your feed.', [], PriceObservatoryCR::DOMAIN_NAME)
+                Translator::getInstance()->trans('There is no shipping informations. Check that at least one delivery module covers the country used by your feed.', [], PriceObservatoryCR::DOMAIN_NAME)
             );
         }
 

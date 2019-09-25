@@ -80,7 +80,6 @@
         $('.js_btn_delete_with_warning').on('click', function(e) {
             e.preventDefault();
             var $warningLine1 = "{intl l='Do you really want to delete this feed ?'}";
-            var $warningLine2 = "{intl l='Please note that it won\'t delete the feed in your Google Merchant account. You will have to do it manually in the Google Merchant Center page.'}";
             document.getElementById('js_btn_modal_confirm_delete_confirm').dataset.formid = this.dataset.formid;
             $('#js_body_modal_confirm_delete').html('<strong>' + $warningLine1 + '</strong><p>' + $warningLine2 + '</p>');
             $('#js_modal_confirm_delete').modal("show");

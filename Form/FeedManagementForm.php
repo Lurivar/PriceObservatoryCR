@@ -18,14 +18,14 @@ class FeedManagementForm extends BaseForm
             ))
             ->add('feed_label', 'text', array(
                 'required'    => true,
-                'label' => Translator::getInstance()->trans('Feed label', array(), PriceObservatoryCR::DOMAIN_NAME),
+                'label' => Translator::getInstance()->trans('Label', array(), PriceObservatoryCR::DOMAIN_NAME),
                 'label_attr' => array(
                     'for' => 'title'
                 ),
             ))
             ->add('lang_id', 'text', array(
                 'required'    => true,
-                'label' => Translator::getInstance()->trans('Lang', array(), PriceObservatoryCR::DOMAIN_NAME),
+                'label' => Translator::getInstance()->trans('Language', array(), PriceObservatoryCR::DOMAIN_NAME),
                 'label_attr' => array(
                     'for' => 'lang_id'
                 )

@@ -4,16 +4,16 @@
         xsi:schemaLocation="http://thelia.net/schema/dic/module http://thelia.net/schema/dic/module/module-2_2.xsd">
     <fullnamespace>PriceObservatoryCR\PriceObservatoryCR</fullnamespace>
     <descriptive locale="en_US">
-        <title> </title>
+        <title>Price Observatory for ClassicRide</title>
     </descriptive>
     <descriptive locale="fr_FR">
-        <title> </title>
+        <title>PriceObservatory - ClassicRide</title>
     </descriptive>
     <languages>
         <language>en_US</language>
         <language>fr_FR</language>
     </languages>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <authors>
         <author>
             <name>Luc Normandon</name>
