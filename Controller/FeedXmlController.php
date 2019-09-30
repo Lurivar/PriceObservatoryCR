@@ -72,7 +72,7 @@ class FeedXmlController extends BaseFrontController
 //            $pseArray = $this->getProductItems($feed, 1000, $offset);
             $this->injectUrls($pseArray, $feed);
             $this->injectTaxedPrices($pseArray, $feed);
-            $this->injectAttributesInTitle($pseArray, $feed);
+            //$this->injectAttributesInTitle($pseArray, $feed);
             $this->injectImages($pseArray);
 
             $this->nb_pse = 0;
@@ -427,7 +427,7 @@ class FeedXmlController extends BaseFrontController
                 
                 WHERE product_sale_elements_purchase.top = 1
 
-                GROUP BY pse.ID';
+                GROUP BY product.ID';
 
         $limit = $this->checkPositiveInteger($limit);
         $offset = $this->checkPositiveInteger($offset);
