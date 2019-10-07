@@ -139,7 +139,8 @@ class FeedXmlController extends BaseFrontController
         $str .= '<rss xmlns="http://base.google.com/ns/1.0" version="2.0">' . PHP_EOL;
         $str .= '<catalogue language="FR" GMT="+1" date="' . date('F d, Y, H:i a') . '" encoding="UTF-8" country="FR" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' . PHP_EOL;
 //xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        $str .= '<NumberOfProducts>' . count($pseArray) . '</NumberOfProducts>' . PHP_EOL;
+
+        $nbrProductPos = mb_strlen($str);
 
         $shippingStr = '';
         foreach ($shippingArray as $shipping) {
@@ -173,6 +174,9 @@ class FeedXmlController extends BaseFrontController
             }
         }
 
+        /** Add number of products @var  $nbrProduct after heading and before the first product tag */
+        $nbrProduct = '<NumberOfProducts>' . $i . '</NumberOfProducts>' . PHP_EOL;
+        $str = substr_replace($str, $nbrProduct, $nbrProductPos, 0);
 
         $str .= '</catalogue>' . PHP_EOL;
         $str .= '</rss>';

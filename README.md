@@ -14,7 +14,7 @@ Add a short description here. You can also add a screenshot if needed.
 Add it in your main thelia composer.json file
 
 ```
-composer require your-vendor/price-observatory-cr-module:~1.0
+composer require thelia/price-observatory-cr-module:~1.0.2
 ```
 
 ## Usage
