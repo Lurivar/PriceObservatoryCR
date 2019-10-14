@@ -561,9 +561,12 @@ class FeedXmlController extends BaseFrontController
         foreach ($pseArray as &$pse) {
             if ($pse['IMAGE_NAME'] != null) {
                 $imageEvent = $this->createImageEvent($pse['IMAGE_NAME'], 'product');
-                $this->dispatch(TheliaEvents::IMAGE_PROCESS, $imageEvent);
-                $pse['IMAGE_PATH'] = $imageEvent->getFileUrl();
-//TESTING//                $pse['IMAGE_PATH'] = 'visiere-bell-custom-500-3-snap-shield-dark-smoke-fume-fonce-ecran-pressions-15293.jpg';
+                if (file_exists($imageEvent->getSourceFilepath())) {
+                    $this->dispatch(TheliaEvents::IMAGE_PROCESS, $imageEvent);
+                    $pse['IMAGE_PATH'] = $imageEvent->getFileUrl();
+                } else {
+                    $pse['IMAGE_PATH'] = null;
+                }
             } else {
                 $pse['IMAGE_PATH'] = null;
             }
