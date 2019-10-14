@@ -14,6 +14,7 @@ use Propel\Runtime\Propel;
 use Thelia\Action\Image;
 use Thelia\Controller\Front\BaseFrontController;
 use Thelia\Core\Event\Image\ImageEvent;
+use Thelia\Core\Event\TheliaEvents;
 use Thelia\Core\HttpFoundation\Response;
 use Thelia\Core\Translation\Translator;
 use Thelia\Model\AreaDeliveryModuleQuery;
@@ -560,7 +561,7 @@ class FeedXmlController extends BaseFrontController
         foreach ($pseArray as &$pse) {
             if ($pse['IMAGE_NAME'] != null) {
                 $imageEvent = $this->createImageEvent($pse['IMAGE_NAME'], 'product');
-                //$this->dispatch(TheliaEvents::IMAGE_PROCESS, $imageEvent);
+                $this->dispatch(TheliaEvents::IMAGE_PROCESS, $imageEvent);
                 $pse['IMAGE_PATH'] = $imageEvent->getFileUrl();
 //TESTING//                $pse['IMAGE_PATH'] = 'visiere-bell-custom-500-3-snap-shield-dark-smoke-fume-fonce-ecran-pressions-15293.jpg';
             } else {
